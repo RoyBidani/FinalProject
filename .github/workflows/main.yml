@@ -38,7 +38,7 @@ jobs:
       working-directory: app
       
     - name: Set version
-      run: echo "NEW_VERSION=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+      run: echo "NEW_VERSION=$(date +'%Y%m%d')" >> $GITHUB_ENV
 
     - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
