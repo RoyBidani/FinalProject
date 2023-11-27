@@ -153,8 +153,7 @@ requests
 bs4
 Flask-PyMongo
 ```
-```html
-```
+
 ### HTML Files
 
 ### - layout.html:
