@@ -42,8 +42,8 @@ jobs:
 
     - name: Push Docker image to DockerHub
       run: |
-        docker tag app_web "${{ secrets.DOCKERHUB_USERNAME }}/noteapp:latest"
-        docker push "${{ secrets.DOCKERHUB_USERNAME }}/noteapp:latest"
+        docker tag app_web "roybidani/noteapp:latest"
+        docker push "roybidani/noteapp:latest"
 
     - name: Clean up
       run: |
