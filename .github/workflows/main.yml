@@ -47,7 +47,7 @@ jobs:
 
     - name: Clean up
       run: |
-        docker stop note-app-container || true
-        docker rm note-app-container || true
-        docker rmi note-app || true
+        docker stop app_web_1 || true
+        docker rm app_web_1 || true
+        docker rmi app_web || true
 
