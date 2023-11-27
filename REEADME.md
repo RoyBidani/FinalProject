@@ -269,5 +269,81 @@ Flask-PyMongo
 
 ---
 
-# Part 2: CI/CD Pipelines
+# Part 2+3+4: CI/CD Pipelines include Tagging Logic Using Bash
+
+### Project/.github/workflows/main.yml
+
+```yaml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      # Step 1: Checkout the code from the repository
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+      # Step 2: Set up the Python environment
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r app/requirements.txt
+      # Step 3: Install project dependencies
+
+    - name: Start Docker Compose
+      run: docker-compose up -d
+      working-directory: app
+      # Step 4: Start Docker Compose for setting up the environment
+
+    - name: Run tests
+      working-directory: app
+      id: test
+      run: |
+        python -m unittest discover -s ./
+      # Step 5: Run unit tests
+
+    - name: Stop Docker Compose
+      run: docker-compose down
+      working-directory: app
+      # Step 6: Stop Docker Compose after tests
+
+    - name: Set version
+      run: echo "NEW_VERSION=${{ github.run_number }}" >> $GITHUB_ENV
+      # Step 7: Set the version to the GitHub run number for unique tagging
+
+    - name: Login to Docker Hub
+      run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+      # Step 8: Login to Docker Hub with provided credentials
+
+    - name: Push Docker image to DockerHub
+      run: |
+        docker tag app_web "roybidani/noteapp:${{ env.NEW_VERSION }}"
+        docker push "roybidani/noteapp:${{ env.NEW_VERSION }}"
+      # Step 9: Tag and push the Docker image to DockerHub
+      continue-on-error: true
+      # Continue to the next step even if pushing the image fails
+
+    - name: Clean up
+      run: |
+        docker stop app_web_1 || true
+        docker rm app_web_1 || true
+        docker rmi app_web || true
+      # Step 10: Clean up containers and images after the build process
+
+```
+
+---
+
 
