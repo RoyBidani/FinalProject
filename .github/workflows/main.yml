@@ -36,18 +36,20 @@ jobs:
     - name: Stop Docker Compose
       run: docker-compose down
       working-directory: app
+      
+    - name: Set version
+      run: echo "NEW_VERSION=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
 
     - name: Login to Docker Hub
       run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Push Docker image to DockerHub
       run: |
-        docker tag app_web "roybidani/noteapp:latest"
-        docker push "roybidani/noteapp:latest"
+        docker tag app_web "roybidani/noteapp:${{ env.NEW_VERSION }}"
+        docker push "roybidani/noteapp:${{ env.NEW_VERSION }}"
 
     - name: Clean up
       run: |
         docker stop app_web_1 || true
         docker rm app_web_1 || true
         docker rmi app_web || true
-
